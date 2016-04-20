@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,7 +17,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.MimeTypeMap;
+import android.webkit.CookieManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +27,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,20 +36,16 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -62,6 +58,12 @@ public class LoginActivity extends Activity {
     static class Pair {
         String cookie;
         String token;
+        String ASPXAUTH;
+
+        @Override
+        public String toString() {
+            return String.format(".ASPXAUTH=%s, __RequestVerificationToken=%s", token, ASPXAUTH);
+        }
     }
 
     private UserLoginTask mAuthTask = null;
@@ -302,29 +304,41 @@ public class LoginActivity extends Activity {
             in.close();
 
 
-//            Header[] cookieHeader = response.getHeaders("Set-Cookie");
-//            if (cookieHeader.length > 0) {
-//                String cookies = cookieHeader[0].getValue();
-//                String[] split = cookies.split(";");
-//                for (String s : split) {
-//                    if (s.startsWith("__RequestVerificationToken")) {
-//                        String[] split2 =  s.split("=");
-//                        pair.cookie = split2[1];
-////                        Log.v("Cookies", split2[1]);
-//                    }
-//                }
-//
-//
-//
-//            }
+          pair.cookie =  getCookie( response, "__RequestVerificationToken");
 
             pair.token = value;
+
+            String cookie = CookieManager.getInstance().getCookie("http://78.9.79.62/Account/Login");
+            if (cookie == null) {
+                cookie = "null";
+            }
+
+
             return  pair;
         }
 
+        private String getCookie(HttpResponse response, String cookieName) {
+            Header[] cookieHeader = response.getHeaders("Set-Cookie");
+            if (cookieHeader.length > 0) {
+                String cookies = cookieHeader[0].getValue();
+                String[] split = cookies.split(";");
+                for (String s : split) {
+                    Log.v("Ciasteczko", s);
+                    if (s.startsWith(cookieName)) {
+                        String[] split2 =  s.split("=");
+                      return   split2[1];
+//                        Log.v("Cookies", split2[1]);
+                    }
+                }
 
 
-//        @Override
+
+            }
+            return null;
+        }
+
+
+        @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
@@ -334,11 +348,11 @@ public class LoginActivity extends Activity {
             BufferedReader in = null;
             try {
 
-                HttpClient client = new DefaultHttpClient();
+                DefaultHttpClient client = new DefaultHttpClient();
 
-               StringBuilder sb = new StringBuilder();
+
                 Pair pair = getRequestVerificationToken(client);
-                sb = login(pair.token, client);
+                login(pair, client);
 
 
 
@@ -353,14 +367,26 @@ public class LoginActivity extends Activity {
                 InputStream inputStream = null;
                 String result = null;
 
+
+                CookieStore cs = new BasicCookieStore();
+                Cookie cookie1 = new BasicClientCookie( "__RequestVerificationToken", pair.cookie);
+//                cs.addCookie(cookie1);
+                Cookie cookie2 = new BasicClientCookie( ".ASPXAUTH", "B53DC4430560E38B3DCA55980D73D9DFD222A0AEE5210EEF0D5FF68EFA8EED0F79288243433A81226CAC97FB0994B60772AF6C18056583406E70906760B4F9155D04FC5A169771D84B2B18A1F7C2D66629EA1437E98AD4B234BADB1320A6279FC4A2DCBB4E27DE78CF2A3CCB10C0B023C6DCD4860F007E6B8C2E8F16EE2A8E2DAD083CF69873BBF43CF12AFCAD324039");
+                cs.addCookie(cookie2);
+//                client.setCookieStore(cs);
+                CookieStore cookieStore = client.getCookieStore();
+                Log.v("CookieStore", cookieStore.toString());
+//                Log.v("CookieStore", pair.toString());
                 HttpResponse response = client.execute(httppost);
+                                client = new DefaultHttpClient();
+                client.setCookieStore(cookieStore);
 
                     HttpEntity entity = response.getEntity();
 
                     inputStream = entity.getContent();
                     // json is UTF-8 by default
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                    sb = new StringBuilder();
+                StringBuilder  sb = new StringBuilder();
 
                     String line = null;
                     while ((line = reader.readLine()) != null) {
@@ -372,55 +398,6 @@ public class LoginActivity extends Activity {
 
 
 
-                FileOutputStream fos = openFileOutput("strona.html", Context.MODE_PRIVATE);
-                fos.write(sb.toString().getBytes());
-
-                Log.v("GAD", sb.toString());
-
-                FileInputStream fis = openFileInput("strona.html");
-
-                String path = "/storage/emulated/0/strona.html";
-                File myFile = new File("/sdcard/strona.html");
-                myFile.createNewFile();
-                FileOutputStream fOut = new FileOutputStream(myFile);
-                OutputStreamWriter myOutWriter =
-                        new OutputStreamWriter(fOut);
-                myOutWriter.append(sb.toString());
-                myOutWriter.close();
-                fOut.close();
-
-
-                File file = new File("/sdcard/strona.html");
-
-// Just example, you should parse file name for extension
-                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(".html");
-
-
-//                Uri uri = Uri.parse("file://" + "/sdcard/strona.html");
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-//                browserIntent.setDataAndType(uri, "text/html");
-//                browserIntent.addCategory(Intent.CATEGORY_BROWSABLE);
-//                browserIntent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
-//                startActivity(browserIntent);
-
-
-
-
-//                Intent intent = new Intent();
-//                intent.setAction(android.content.Intent.ACTION_VIEW);
-//                intent.setDataAndType(Uri.fromFile(file), mime);
-//                startActivityForResult(intent, 10);
-
-
-//                fis.
-
-// Just example, you should parse file name for extension
-//                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(".html");
-//
-//                Intent intent = new Intent();
-//                intent.setAction(android.content.Intent.ACTION_VIEW);
-//                intent.setDataAndType(Uri.fromFile(file), mime);
-//                startActivityForResult(intent, 10);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -431,121 +408,9 @@ public class LoginActivity extends Activity {
             return true;
         }
 
-
-
-        //        @Override
-        protected Boolean doInBackground2(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            BufferedReader in = null;
-            try {
-                StringBuilder sb = new StringBuilder();
-
-
-
-//                HttpClient client = new DefaultHttpClient();
-//                Pair pair = getRequestVerificationToken(client);
-//                sb = login(pair.token, client);
-
-
-                DefaultHttpClient client = new DefaultHttpClient();
-                Pair pair = getRequestVerificationToken(client);
-                BasicClientCookie urlCookie = new BasicClientCookie("__RequestVerificationToken",pair.cookie);
-                urlCookie.setDomain("http://78.9.79.62/Game");
-                Log.v("Json", pair.cookie);
-                CookieStore lCS = new BasicCookieStore();
-                lCS.addCookie(urlCookie);
-//                client.setCookieStore(lCS);
-//
-                sb =   login(pair.token, client);
-
-
-                showLogActivity(sb.toString());
-
-                HttpPost request = new HttpPost(
-                        "http://78.9.79.62/Account/Login");
-                List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-
-
-                // Log in
-                postParameters.add(new BasicNameValuePair("UserName", mUserName));
-                postParameters.add(new BasicNameValuePair("Password", "recrec"));
-                postParameters.add(new BasicNameValuePair("RemeberMe", "false"));
-                postParameters.add(new BasicNameValuePair("__RequestVerificationToken", pair.token));
-
-                Log.v("Json", String.format("User: %s, password %s, token: %s", mUserName, mPassword, pair.token));
-
-//                Log.v("Test2", value);
-
-
-                UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
-                        postParameters, "UTF-8");
-
-
-                request.setEntity(formEntity);
-              client =   new DefaultHttpClient(new BasicHttpParams());
-                HttpResponse response = client.execute(request);
-                 in = new BufferedReader(
-                        new InputStreamReader(
-                                response.getEntity().getContent()));
-
-                 sb = new StringBuilder("");
-                String line = "";
-                String NL = System.getProperty("line.separator");
-                while ((line = in.readLine()) != null) {
-                    Log.v("Json", line);
-
-                }
-                in.close();
-
-
-
-
-                HttpPost httppost = new HttpPost("http://78.9.79.62/Game/JsonPoke");
-
-
-
-
-                // Depends on your web service
-                httppost.setHeader("Content-type", "application/json");
-                InputStream inputStream = null;
-                String result = null;
-                try {
-                    response = client.execute(httppost);
-
-                    HttpEntity entity = response.getEntity();
-
-                    inputStream = entity.getContent();
-                    // json is UTF-8 by default
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                     sb = new StringBuilder();
-
-                     line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    result = sb.toString();
-                    Log.v("Json", response.getHeaders("Set-Cookie")[0].getValue());
-                } catch (Exception e) {
-                    // Oops
-                } finally {
-                    try {
-                        if (inputStream != null) inputStream.close();
-                    } catch (Exception squish) {
-                    }
-                }
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return true;
-        }
 
         @NonNull
-        private StringBuilder login(String value, HttpClient client) throws IOException {
+        private void login(Pair pair, HttpClient client) throws IOException {
             if (client == null) {
                 client = new DefaultHttpClient();
             }
@@ -564,7 +429,7 @@ public class LoginActivity extends Activity {
             postParameters.add(new BasicNameValuePair("UserName", mUserName));
             postParameters.add(new BasicNameValuePair("Password", mPassword));
             postParameters.add(new BasicNameValuePair("RemeberMe", "false"));
-            postParameters.add(new BasicNameValuePair("__RequestVerificationToken", value));
+            postParameters.add(new BasicNameValuePair("__RequestVerificationToken", pair.token));
 
 
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
@@ -575,6 +440,9 @@ public class LoginActivity extends Activity {
 
             request.setEntity(formEntity);
             response = client.execute(request);
+
+            pair.ASPXAUTH =  getCookie( response, ".ASPXAUTH");
+
             in = new BufferedReader(
                     new InputStreamReader(
                             response.getEntity().getContent()));
@@ -589,7 +457,9 @@ public class LoginActivity extends Activity {
 
             result = sb.toString();
             Log.v("LoginDupa", sb.toString());
-            return sb;
+
+
+
         }
 
         @Override
