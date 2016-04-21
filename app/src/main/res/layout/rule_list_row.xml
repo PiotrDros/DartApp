@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dip">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/header"
+        android:layout_gravity="top"
+        android:layout_marginRight="10dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/ordered_list_1" />
+
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/icon"
+        android:gravity="center_vertical"
+        android:text="Register Properly"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_toRightOf="@+id/icon"
+        android:text="Generally best option is to play a pro game which is 2 player 501 double out. But you may play whatever you want as long as there are 2-8 participants and there are no draws alowed. You can also report a game where not everyone agreed to play ranked. In that case simply report those players that played ranked and omit those that did not."
+        android:textSize="12sp" />
+
+</RelativeLayout> 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="ordered_list">
+        <item>@drawable/ordered_list_1</item>
+        <item>@drawable/ordered_list_2</item>
+        <item>@drawable/ordered_list_3</item>
+        <item>@drawable/ordered_list_4</item>
+        <item>@drawable/ordered_list_5</item>
+        <item>@drawable/ordered_list_6</item>
+        <item>@drawable/ordered_list_7</item>
+        <item>@drawable/ordered_list_8</item>
+        <item>@drawable/ordered_list_9</item>
+    </integer-array>
+
+</resources>

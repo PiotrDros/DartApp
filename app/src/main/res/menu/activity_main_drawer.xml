@@ -6,6 +6,10 @@
             android:id="@+id/log_in"
             android:icon="@drawable/ic_menu_camera"
             android:title="Log In" />
+        <item
+            android:id="@+id/log_activity"
+            android:icon="@drawable/abc_ic_menu_copy_mtrl_am_alpha"
+            android:title="Log activity" />
     </group>
 
 

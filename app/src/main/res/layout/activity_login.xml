@@ -65,6 +65,12 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/rember_me"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/prompt_remeber_me"/>
+
             <Button
                 android:id="@+id/log_in_button"
                 style="?android:textAppearanceSmall"
