@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,19 +21,19 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +50,7 @@ public class LoginActivity extends Activity {
     private View mProgressView;
     private View mLoginFormView;
     private CheckBox remeberMeCheckBox;
+    private DartApplication dartApplication;
 
 
     @Override
@@ -83,6 +85,8 @@ public class LoginActivity extends Activity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        dartApplication = (DartApplication) LoginActivity.this.getApplication();
     }
 
 
@@ -203,45 +207,55 @@ public class LoginActivity extends Activity {
 
         private final String mUserName;
         private final String mPassword;
-        private final Boolean mremberMe;
+        private final Boolean mRemberMe;
         private final String appUrl;
 
         UserLoginTask(String userName, String password, Boolean remberMe) {
             mUserName = userName;
             mPassword = password;
-            mremberMe = remberMe;
+            mRemberMe = remberMe;
 
             appUrl = Util.getAppUrl(getApplicationContext());
         }
 
 
-        private String getRequestVerificationToken(HttpClient client) throws IOException {
-            HttpGet get = new HttpGet("http://"+ appUrl +"/Account/Login");
-            HttpResponse response = client.execute(get);
+        private String getRequestVerificationToken() throws IOException {
+            CookieManager cm = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(cm);
+            dartApplication.setCookieManager(cm);
 
+            URL url = new URL("http://" + appUrl + "/Account/Login");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+            dartApplication.setCookies(urlConnection.getHeaderField("Set-Cookie"));
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            response.getEntity().getContent()));
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            StringBuilder sb = new StringBuilder("");
-            String line = "";
-            String NL = System.getProperty("line.separator");
-            while ((line = in.readLine()) != null) {
-                sb.append(line + NL);
+            try {
+                StringBuilder sb = new StringBuilder("");
+                String line = "";
+                String NL = System.getProperty("line.separator");
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + NL);
 
-                if (line.contains("__RequestVerificationToken")) {
-                    Pattern pattern = Pattern.compile(".*value=\"(.*)\".*");
-                    Matcher matcher = pattern.matcher(line);
-                    matcher.matches();
+                    if (line.contains("__RequestVerificationToken")) {
+                        Pattern pattern = Pattern.compile(".*value=\"(.*)\".*");
+                        Matcher matcher = pattern.matcher(line);
+                        matcher.matches();
 
-                    return matcher.group(1);
+                        return matcher.group(1);
+                    }
+
                 }
-
+            } finally {
+                reader.close();
+                urlConnection.disconnect();
             }
-            in.close();
 
-           return null;
+            return null;
         }
 
 
@@ -250,12 +264,8 @@ public class LoginActivity extends Activity {
             String value = "";
             BufferedReader in = null;
             try {
-
-                DefaultHttpClient client = new DefaultHttpClient();
-                String requestVerificationToken =   getRequestVerificationToken(client);
-                login(requestVerificationToken, client);
-                DartApplication dartApplication  = (DartApplication) LoginActivity.this.getApplication();
-                dartApplication.setCookieStore(client.getCookieStore());
+                String requestVerificationToken =   getRequestVerificationToken();
+                login(requestVerificationToken);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -266,21 +276,45 @@ public class LoginActivity extends Activity {
 
 
         @NonNull
-        private void login(String requestVerificationToken, HttpClient client) throws IOException {
-            HttpPost request = new HttpPost(
-                    "http://"+ appUrl+ "/Account/Login");
-            List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-            postParameters.add(new BasicNameValuePair("UserName", mUserName));
-            postParameters.add(new BasicNameValuePair("Password", mPassword));
-            postParameters.add(new BasicNameValuePair("RemeberMe", mremberMe.toString()));
-            postParameters.add(new BasicNameValuePair("__RequestVerificationToken", requestVerificationToken));
+        private void login(String requestVerificationToken) throws IOException {
+            CookieManager cm  =  dartApplication.getCookieManager();
 
 
-            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
-                    postParameters, "UTF-8");
+            URL url = new URL("http://"+ appUrl +"/Account/Login");
+            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setRequestMethod("POST");
+//            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36");
+//            urlConnection.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            urlConnection.setRequestProperty("Cookie", dartApplication.getCookies());
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
 
-            request.setEntity(formEntity);
-            client.execute(request);
+
+
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("UserName", mUserName)
+                    .appendQueryParameter("Password", mPassword)
+                    .appendQueryParameter("RemeberMe", mRemberMe.toString())
+                    .appendQueryParameter("__RequestVerificationToken", requestVerificationToken);
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+
+
+            urlConnection.connect();
+            // we have to touch urlConnection to get somehow cookies from cm... Still don't know why...
+            urlConnection.getResponseCode();
+            List<HttpCookie> cookies = cm.getCookieStore().getCookies();
+            dartApplication.setCookies(cookies.get(0).toString());
+            urlConnection.disconnect();
         }
 
 

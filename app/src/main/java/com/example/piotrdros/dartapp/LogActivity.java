@@ -3,17 +3,15 @@ package com.example.piotrdros.dartapp;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class LogActivity extends AppCompatActivity {
 
@@ -44,44 +42,40 @@ public class LogActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... params) {
+            DartApplication dartApplication = (DartApplication) LogActivity.this.getApplication();
+
             try {
+                URL url = new URL("http://78.9.79.62/Game/JsonPoke");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
 
-                String appUrl = Util.getAppUrl(getApplicationContext());
+                urlConnection.setRequestProperty("Cookie", dartApplication.getCookies());
+
+                urlConnection.connect();
+
+                Log.v("MyConn2",dartApplication.getCookies()) ;
 
 
-                DartApplication dartApplication = (DartApplication) LogActivity.this.getApplication();
+                InputStream inputStream = urlConnection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                HttpPost httppost = new HttpPost("http://" + appUrl + "/Game/JsonPoke");
-                // Depends on your web service
-                httppost.setHeader("Content-type", "application/json");
-                InputStream inputStream = null;
+                try {
+                    StringBuilder sb = new StringBuilder("");
+                    String line = "";
+                    String NL = System.getProperty("line.separator");
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + NL);
 
-
-                DefaultHttpClient client = new DefaultHttpClient();
-                client.setCookieStore(dartApplication.getCookieStore());
-
-                HttpResponse response = null;
-                response = client.execute(httppost);
-
-                HttpEntity entity = response.getEntity();
-
-                inputStream = entity.getContent();
-                // json is UTF-8 by default
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                StringBuilder sb = new StringBuilder();
-
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                    }
+                    return sb.toString();
+                } finally {
+                    reader.close();
                 }
-                return sb.toString();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            return null;
-        }
+        return null;
+    }
 
         @Override
         protected void onPostExecute(String s) {
