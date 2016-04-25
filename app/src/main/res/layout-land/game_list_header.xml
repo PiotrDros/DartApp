@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/table_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5pt"
+    android:orientation="horizontal"
+    tools:showIn="@layout/content_all_games">
+
+
+    <TextView
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="1"
+        android:text="id"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/added"
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="2"
+        android:text="Added"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="2"
+        android:text="Done"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="5"
+        android:text="Players"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="2"
+        android:text="Reporter"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:layout_width="0pt"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_weight="1"
+        android:text="Status"
+        android:textStyle="bold" />
+
+</LinearLayout>

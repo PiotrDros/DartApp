@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -312,8 +313,17 @@ public class LoginActivity extends Activity {
             urlConnection.connect();
             // we have to touch urlConnection to get somehow cookies from cm... Still don't know why...
             urlConnection.getResponseCode();
+
             List<HttpCookie> cookies = cm.getCookieStore().getCookies();
-            dartApplication.setCookies(cookies.get(0).toString());
+            String appCookies = "";
+            for (HttpCookie cookie : cookies) {
+                appCookies = appCookies + cookie.toString() + ";";
+            }
+            dartApplication.setCookies( appCookies);
+
+            Log.v("Headers", urlConnection.getHeaderFields().toString())  ;
+            Log.v("Headers", cookies.toString())  ;
+            Log.v("Headers", dartApplication.getCookies())  ;
             urlConnection.disconnect();
         }
 

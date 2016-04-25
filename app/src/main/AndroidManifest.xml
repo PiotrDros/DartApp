@@ -40,8 +40,18 @@
         <activity android:name=".LogActivity" />
         <activity
             android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".game.AllGamesActivity"
+            android:label="@string/title_activity_all_games"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".game.GameDetailsActivity"
+            android:label="@string/title_activity_game_details"
+            android:parentActivityName=".game.AllGamesActivity">
+
+        </activity>
     </application>
 
 </manifest>

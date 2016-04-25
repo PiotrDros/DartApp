@@ -6,12 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class LogActivity extends AppCompatActivity {
 
@@ -44,42 +40,29 @@ public class LogActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             DartApplication dartApplication = (DartApplication) LogActivity.this.getApplication();
 
-            try {
-                URL url = new URL("http://78.9.79.62/Game/JsonPoke");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
+            String  appUrl = Util.getAppUrl(getApplicationContext());
+           return Util.getStringFromHttpGet("http://" + appUrl + "/Game/JsonPoke", dartApplication);
 
-                urlConnection.setRequestProperty("Cookie", dartApplication.getCookies());
-
-                urlConnection.connect();
-
-                Log.v("MyConn2",dartApplication.getCookies()) ;
-
-
-                InputStream inputStream = urlConnection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                try {
-                    StringBuilder sb = new StringBuilder("");
-                    String line = "";
-                    String NL = System.getProperty("line.separator");
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + NL);
-
-                    }
-                    return sb.toString();
-                } finally {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        return null;
     }
 
         @Override
         protected void onPostExecute(String s) {
-            LogActivity.this.textView.setText(s);
+
+            try {
+                JSONArray array = new JSONArray(s);
+
+                String one = array.getString(0);
+                String two = array.getString(1);
+                String three =array.getString(2);
+
+                LogActivity.this.textView.setText(String.format("Values: %s, %s, %s", one, two, three));
+            } catch (JSONException e) {
+                Log.e("LogActivity", e.toString());
+
+                LogActivity.this.textView.setText(e.toString());
+            }
+
+
         }
     }
 

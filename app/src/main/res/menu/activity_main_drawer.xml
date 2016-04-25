@@ -6,6 +6,12 @@
             android:id="@+id/log_in"
             android:icon="@drawable/ic_menu_camera"
             android:title="Log In" />
+
+        <item
+            android:id="@+id/all_games_activity"
+            android:icon="@drawable/abc_btn_rating_star_on_mtrl_alpha"
+            android:title="All Games" />
+
         <item
             android:id="@+id/log_activity"
             android:icon="@drawable/abc_ic_menu_copy_mtrl_am_alpha"
