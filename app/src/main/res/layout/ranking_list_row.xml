@@ -7,13 +7,13 @@
 
 
     <TextView
-        android:id="@+id/added"
+        android:id="@+id/name"
         android:layout_width="0pt"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:layout_weight="3"
-        android:text="2016-04-22 11:09:43" />
+        android:text="Gio" />
 
     <View
         android:layout_width="1dp"
@@ -22,13 +22,13 @@
 
 
     <TextView
-        android:id="@+id/done"
+        android:id="@+id/rank"
         android:layout_width="0pt"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:layout_weight="3"
-        android:text="2016-04-22 11:09:43" />
+        android:text="+1258.24" />
 
     <View
         android:layout_width="1dp"
@@ -37,28 +37,13 @@
 
 
     <TextView
-        android:id="@+id/reporter"
+        android:id="@+id/last_change"
         android:layout_width="0pt"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:layout_weight="2"
-        android:text="abaranowska" />
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="?android:attr/listDivider" />
-
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="0pt"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_weight="1.5"
-        android:text="New" />
+        android:text="+6.14" />
 
 </LinearLayout>
 

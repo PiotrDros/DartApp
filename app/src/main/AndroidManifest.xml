@@ -49,8 +49,14 @@
         <activity
             android:name=".game.GameDetailsActivity"
             android:label="@string/title_activity_game_details"
-            android:parentActivityName=".game.AllGamesActivity">
-
+            android:parentActivityName=".game.AllGamesActivity"></activity>
+        <activity
+            android:name=".ranking.RankingActivity"
+            android:label="@string/title_activity_ranking"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.piotrdros.dartapp.MainActivity" />
         </activity>
     </application>
 

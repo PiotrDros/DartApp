@@ -34,6 +34,7 @@
     <string name="pref_app_url_default_value">78.9.79.62</string>
     <string name="title_activity_all_games">Games</string>
     <string name="title_activity_game_details">Details</string>
+    <string name="title_activity_ranking">Ranking</string>
 
 
 </resources>

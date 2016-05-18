@@ -100,6 +100,11 @@
             android:layout_weight="1"
             android:text="2016-04-22 20:35:38" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
         <TextView
             android:id="@+id/winner"
             android:layout_width="0pt"
@@ -108,6 +113,11 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:text="Gio" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
 
 
         <TextView
@@ -119,6 +129,11 @@
             android:layout_weight="1"
             android:text="2" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
 
         <TextView
             android:id="@+id/player_placement"
@@ -129,6 +144,11 @@
             android:layout_weight="2"
             android:text="Gio, TomekK" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
 
         <TextView
             android:id="@+id/reporter"
@@ -138,6 +158,11 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:text="Gio" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
 
 
         <TextView

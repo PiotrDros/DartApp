@@ -13,6 +13,11 @@
             android:title="All Games" />
 
         <item
+            android:id="@+id/ranking_activity"
+            android:icon="@drawable/common_full_open_on_phone"
+            android:title="Ranking" />
+
+        <item
             android:id="@+id/log_activity"
             android:icon="@drawable/abc_ic_menu_copy_mtrl_am_alpha"
             android:title="Log activity" />

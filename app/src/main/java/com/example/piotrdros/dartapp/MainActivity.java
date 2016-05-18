@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.example.piotrdros.dartapp.game.AllGamesActivity;
+import com.example.piotrdros.dartapp.ranking.RankingActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,8 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings)
-        {
+        if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent()
                     .setClass(this,
                             SettingsActivity.class);
@@ -79,11 +79,14 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.log_activity){
+        } else if (id == R.id.log_activity) {
             Intent intent = new Intent(this, LogActivity.class);
             startActivity(intent);
-        } else if (id == R.id.all_games_activity){
+        } else if (id == R.id.all_games_activity) {
             Intent intent = new Intent(this, AllGamesActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.ranking_activity) {
+            Intent intent = new Intent(this, RankingActivity.class);
             startActivity(intent);
         }
 

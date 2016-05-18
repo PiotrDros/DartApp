@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.piotrdros.dartapp.R;
+import com.example.piotrdros.dartapp.Util;
 
 import java.util.List;
 
@@ -51,14 +52,15 @@ public class GameAdapter extends ArrayAdapter<Game> {
         if (holder.id != null) {
             holder.id.setText(game.id);
         }
-        holder.added .setText(game.added);
+        holder.added.setText(game.added);
         holder.done.setText(game.done);
-        if(holder.players != null) {
-            holder.players .setText(game.players);
+        if (holder.players != null) {
+            holder.players.setText(game.players);
         }
         holder.reporter.setText(game.reporter);
-        holder.status  .setText(game.status);
+        holder.status.setText(game.status);
 
+        row.setBackgroundResource(Util.getRowBackgroundColor(position));
 
         return row;
     }

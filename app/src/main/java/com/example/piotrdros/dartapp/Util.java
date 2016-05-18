@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Util {
 
-    public static String getAppUrl (Context context) {
+    public static String getAppUrl(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Resources resources = context.getResources();
 
@@ -27,7 +27,7 @@ public class Util {
                 resources.getString(R.string.pref_app_url),
                 resources.getString(R.string.pref_app_url_default_value));
 
-        return  appUrl;
+        return appUrl;
     }
 
 
@@ -42,6 +42,7 @@ public class Util {
     }
 
     public static List<Rule> rules = new ArrayList<>();
+
     static {
         rules.add(new Rule("Register Properly", "Register with your name or nickname so that everyone knows who you are. Keep it short and simple attempts to be a smartbottom will most likely earn you appropriate nickname."));
         rules.add(new Rule("Type of games you may play", "Generally best option is to play a \"pro\" game which is 2 player 501 double out. But you may play whatever you want as long as there are 2-8 participants and there are no draws alowed. You can also report a game where not everyone agreed to play ranked. In that case simply report those players that played ranked and omit those that did not."));
@@ -52,8 +53,6 @@ public class Util {
                 "d. If someone forgets to switch player and next player throws a dart that stays on board, then that player can choose whether to remove dart and then switch player to repeat throw or switch player and push the dart to score (according to above rule c).\n" +
                 "e. Players need to play at least one game to be ranked."));
     }
-
-
 
 
     public static String getStringFromHttpGet(String urlSTring, DartApplication dartApplication) {
@@ -97,7 +96,16 @@ public class Util {
 
     public static boolean isLandscape(Resources resources) {
 
-      return   resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        return resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+
+    public static int getRowBackgroundColor(int position) {
+        if (position % 2 == 0) {
+            return R.color.color_background_darker;
+        } else {
+            return R.color.color_background;
+        }
     }
 
 }
