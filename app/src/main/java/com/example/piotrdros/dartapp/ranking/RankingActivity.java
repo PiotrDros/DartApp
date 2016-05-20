@@ -3,11 +3,14 @@ package com.example.piotrdros.dartapp.ranking;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.piotrdros.dartapp.DartApplication;
 import com.example.piotrdros.dartapp.R;
 import com.example.piotrdros.dartapp.Util;
+import com.example.piotrdros.dartapp.playerdetails.PlayerDetailsActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,9 +29,19 @@ public class RankingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
 
-
         listView = (ListView) findViewById(R.id.ranking_list_view);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RankingAdapter adapter = (RankingAdapter) listView.getAdapter();
+                if (adapter != null) {
+                    Ranking ranking = adapter.rankings.get(position);
 
+                    PlayerDetailsActivity.startPlayerDetailsActivity(RankingActivity.this, ranking.idPalyer);
+
+                }
+            }
+        });
 
         new GetGamesTask().execute();
 
@@ -53,10 +66,11 @@ public class RankingActivity extends AppCompatActivity {
             Element tbody = table.getElementsByTag("tbody").get(0);
             Elements rows = tbody.getElementsByTag("tr");
             for (Element row : rows) {
-                Elements dataElements = row.children();
                 Ranking ranking = new Ranking();
                 rankings.add(ranking);
 
+                ranking.idPalyer = Util.extractId( row.attr("onclick"));
+                Elements dataElements = row.children();
                 ranking.name = dataElements.get(0).text();
                 ranking.rank = dataElements.get(1).text();
                 ranking.lastChange = dataElements.get(2).text();
@@ -64,7 +78,7 @@ public class RankingActivity extends AppCompatActivity {
 
             }
 
-            return  rankings;
+            return rankings;
         }
 
         @Override

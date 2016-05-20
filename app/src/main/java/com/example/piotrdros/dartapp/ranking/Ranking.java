@@ -7,15 +7,7 @@ public class Ranking {
     String name;
     String rank;
     String lastChange;
-
-    @Override
-    public String toString() {
-        return "Ranking{" +
-                "name='" + name + '\'' +
-                ", rank='" + rank + '\'' +
-                ", lastChange='" + lastChange + '\'' +
-                '}';
-    }
+    String idPalyer;
 
 
 

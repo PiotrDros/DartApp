@@ -15,8 +15,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
+
+    public static final Pattern REGEX = Pattern.compile("location\\.href = '\\/PlayerRanking\\/Details\\/([0-9]*)'");
+
+
+    public static String extractId(String toExtract) {
+        Matcher matcher = REGEX.matcher(toExtract);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return "";
+        }
+    }
 
     public static String getAppUrl(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

@@ -37,4 +37,7 @@ public class DartApplication extends Application {
     public CookieManager getCookieManager() {
         return cookieManager;
     }
+
+
+    public static final String TAG = "DartApplication";
 }

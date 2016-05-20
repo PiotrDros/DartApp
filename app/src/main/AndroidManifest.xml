@@ -49,7 +49,7 @@
         <activity
             android:name=".game.GameDetailsActivity"
             android:label="@string/title_activity_game_details"
-            android:parentActivityName=".game.AllGamesActivity"></activity>
+            android:parentActivityName=".game.AllGamesActivity" />
         <activity
             android:name=".ranking.RankingActivity"
             android:label="@string/title_activity_ranking"
@@ -57,6 +57,12 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.piotrdros.dartapp.MainActivity" />
+        </activity>
+        <activity android:name=".playerdetails.PlayerDetailsActivity" android:label="Player details and history">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.piotrdros.dartapp.ranking.RankingActivity" />
+
         </activity>
     </application>
 

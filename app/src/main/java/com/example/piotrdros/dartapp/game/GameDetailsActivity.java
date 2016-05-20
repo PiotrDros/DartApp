@@ -28,6 +28,9 @@ public class GameDetailsActivity extends AppCompatActivity {
     private TextView reporterTextView;
     private TextView statusTextView;
 
+
+
+
     public static void startGameDetailsActivity(Activity parentActivity, String gameId) {
         Intent intent = new Intent(parentActivity, GameDetailsActivity.class);
         intent.putExtra(GAME_ID, gameId);
